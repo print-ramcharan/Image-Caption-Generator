@@ -10,7 +10,12 @@ Quick start
 
 2. Configure
 
-   Copy `.env.example` to `.env` and set `GOOGLE_CLIENT_ID` and `JWT_SECRET`.
+   Create `.env` and set required secrets:
+
+   GOOGLE_CLIENT_ID=your_google_client_id
+   JWT_SECRET=replace_me
+   # optional
+   MODEL_PATH=/absolute/path/to/model
 
 3. Run
 

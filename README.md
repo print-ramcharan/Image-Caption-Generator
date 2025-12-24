@@ -2,32 +2,68 @@ Project: Image Caption Generator (React + Vite frontend, FastAPI backend)
 
 Overview
 --------
-This repository contains a scaffold for an image caption generation web app.
+Web app that authenticates with Google, uploads an image, and returns a generated caption from the FastAPI backend.
 
-Structure
----------
-- `frontend/` — Vite + React + Tailwind CSS app. Uses @tanstack/react-query and Zustand. Client performs Google Sign-In via Google Identity Services, calls backend for caption generation and for saving/fetching history.
-- `backend/` — FastAPI app exposing REST endpoints (`/api/generate`, `/api/auth/google`, `/api/history`). Includes a `model.py` placeholder that loads a model file from disk; replace with your model invocation.
+Prerequisites
+-------------
+- Python 3.10+
+- Node.js 18+ (npm included)
+- Git
 
-Quick start (local dev)
+Clone the repo
+--------------
+```bash
+git clone https://github.com/print-ramcharan/Image-Caption-Generator.git
+cd Image-Caption-Generator
+```
+
+Backend setup (FastAPI)
 -----------------------
-1. Backend
+```bash
+cd backend
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 
-   cd backend
-   python -m venv .venv
-   source .venv/bin/activate
-   pip install -r requirements.txt
-   cp ../.env.example .env
-   # set GOOGLE_CLIENT_ID, JWT_SECRET in .env
-   uvicorn main:app --reload --host 0.0.0.0 --port 8000
+# create .env with required secrets
+cat > .env <<'EOF'
+GOOGLE_CLIENT_ID=your_google_client_id
+JWT_SECRET=replace_me
+# optional: MODEL_PATH=/absolute/path/to/model
+EOF
 
-2. Frontend
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
 
-   cd frontend
-   npm install
-   npm run dev
+Frontend setup (Vite + React)
+-----------------------------
+```bash
+cd frontend
+npm install
+
+# create .env with Vite-prefixed vars
+cat > .env <<'EOF'
+VITE_GOOGLE_CLIENT_ID=your_google_client_id
+VITE_API_BASE=http://localhost:8000
+EOF
+
+npm run dev
+# app runs at http://localhost:5173
+```
+
+Project structure
+-----------------
+- `frontend/` — Vite + React + Tailwind, uses @tanstack/react-query and Zustand. Handles Google Sign-In and calls backend for caption generation and history.
+- `backend/` — FastAPI service exposing `/api/generate`, `/api/auth/google`, `/api/history`. `model.py` contains `generate_caption(image_bytes)`; replace with your model invocation and load from `MODEL_PATH` if needed.
+
+Docker (optional)
+-----------------
+If you prefer containers, add the required env vars to a `.env` file in the repo root, then run:
+```bash
+docker-compose up --build
+```
 
 Notes
 -----
-- The backend `model.py` is a placeholder — it returns a simple caption. Replace its logic with the code to call your model file.
-- For production, deploy the frontend to Vercel (recommended) and the backend to a container host or serverless platform that supports FastAPI.
+- The provided `model.py` returns a placeholder caption; wire it to your model for real predictions.
+- Sample reference/prediction JSON files live in `backend/` for evaluation helpers.
